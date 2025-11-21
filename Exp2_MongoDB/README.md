@@ -76,3 +76,28 @@ Here are additional essential MongoDB queries to consider for future work and re
 | **Sorting Results** | Retrieves all documents and sorts them by the `name` field in **ascending** (`1`) order. | Useful for displaying ordered results. | `db.students.find().sort({name: 1})` |
 | **Bulk Deletion** | Deletes **all** documents that match the condition (`branch: "IT"`). | Efficient for cleaning up large sets of records. | `db.students.deleteMany({branch: "IT"})` |
 | **Drop Collection** | **Permanently deletes** the entire `students` collection and all its data. | *Use with extreme caution!* | `db.students.drop()` |
+
+### Count documents:
+
+db.students.countDocuments()
+
+### Sort:
+
+db.students.find().sort({ age: 1 })
+
+### Limit:
+
+db.students.find().limit(2)
+
+### Drop Collection:
+
+db.students.drop()
+
+### Drop Database:
+
+db.dropDatabase()
+
+---
+
+## ✔ Summary
+This README contains all important CRUD + basic mongo commands for fast revision and GitHub documentation.
