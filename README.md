@@ -1,6 +1,30 @@
 # College-FullStack-Lab-Experiment
 Source code and documentation for a full-stack web development laboratory experiment completed as a college assignment.
 
+### Git Commands
+
+```
+git config --global user.name "Atharv"
+git config --global user.email "Atharv@1985"
+mkdir myproject
+cd myproject
+git init
+echo hello > file.text
+git  add file.text
+git status
+git commit -m "Added"
+git log
+
+```
+
+
+## Backend
+npm init -y
+npm install express mongoose cores
+# run using
+node server.js
+
+
 ### server.js
 ```jsx
 const express = require('express');
