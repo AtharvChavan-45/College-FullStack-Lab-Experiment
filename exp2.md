@@ -341,4 +341,52 @@ rules = extract_rules(tree)
 for i, rule in enumerate(rules, 1):
     print(f"Rule {i}: IF {rule}")
 
-    ```
+```
+```jsx
+
+import pandas as pd
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+import category_encoders as ce
+import category_encoders as ce
+import matplotlib.pyplot as plt
+
+# Sample dataset: Weather and PlayTennis
+data = {
+    'Outlook': ['Sunny', 'Sunny', 'Overcast', 'Rainy', 'Rainy', 'Overcast', 'Sunny', 'Sunny', 'Rainy', 'Rainy'],
+    'Temperature': ['Hot', 'Hot', 'Hot', 'Mild', 'Cool', 'Cool', 'Mild', 'Cool', 'Mild', 'Mild'],
+    'Humidity': ['High', 'High', 'High', 'Normal', 'Normal', 'High', 'Normal', 'Normal', 'High', 'Normal'],
+    'Wind': ['Weak', 'Strong', 'Weak', 'Weak', 'Weak', 'Strong', 'Strong', 'Weak', 'Weak', 'Strong'],
+    'PlayTennis': ['No', 'No', 'Yes', 'Yes', 'Yes', 'Yes', 'No', 'Yes', 'Yes', 'No']
+}
+
+df = pd.DataFrame(data)
+
+# Label Encoding for categorical features
+encoder = ce.OrdinalEncoder()
+X = encoder.fit_transform(df[['Outlook', 'Temperature', 'Humidity', 'Wind']])
+y = df['PlayTennis']
+
+# Function to plot the tree
+def plot_tree_model(clf, title):
+    plt.figure(figsize=(12, 8))
+    plot_tree(clf, feature_names=X.columns, class_names=['No', 'Yes'], filled=True, rounded=True)
+    plt.title(title)
+    plt.show()
+
+# ID3 (using entropy)
+id3_clf = DecisionTreeClassifier(criterion='entropy')
+id3_clf.fit(X, y)
+plot_tree_model(id3_clf, "ID3 Decision Tree (Entropy)")
+
+# C4.5 (using entropy - gain ratio logic isn't directly available in sklearn)
+# Sklearn doesn't directly support Gain Ratio, so we simulate it using entropy.
+c45_clf = DecisionTreeClassifier(criterion='entropy')
+c45_clf.fit(X, y)
+plot_tree_model(c45_clf, "C4.5 Decision Tree (Entropy)")
+
+# CART (using Gini Impurity)
+cart_clf = DecisionTreeClassifier(criterion='gini')
+cart_clf.fit(X, y)
+plot_tree_model(cart_clf, "CART Decision Tree (Gini Impurity)")
+
+```
