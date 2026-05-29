@@ -309,7 +309,93 @@ plt.legend()
 plt.show()
 
 ```
-# check for different degree
+# logistic regression for other parameters analysis
+
+```jsx
+import pandas as pd
+import numpy as np
+import warnings
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+
+# Ignore convergence warnings that sometimes pop up during extreme parameter testing
+warnings.filterwarnings('ignore')
+
+# 1. Load dataset (Assuming outcome column is 'Outcome' based on your previous code)
+df = pd.read_csv('diab1.csv')
+
+X = df.drop(columns=['Outcome'])
+y = df['Outcome']
+
+# 2. Train-test split (stratify=y is excellent practice for imbalanced datasets!)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42, stratify=y)
+
+# 3. Standardize features
+scaler = StandardScaler()
+X_train_scaled = scaler.fit_transform(X_train)
+X_test_scaled = scaler.transform(X_test)
+
+# 4. Define the valid parameter combinations for Logistic Regression
+# We pair solver and penalty to avoid mathematical incompatibility errors
+solver_penalty_pairs = [
+    ('liblinear', 'l1'),
+    ('liblinear', 'l2'),
+    ('lbfgs', 'l2')
+]
+
+# The range of C values (from very strict regularization to almost none)
+C_values = [0.01, 0.1, 1.0, 10.0, 100.0]
+
+results_list = []
+
+print("Starting Logistic Regression parameter grid search...\n")
+
+# 5. Loop through all combinations
+for solver, penalty in solver_penalty_pairs:
+    for C in C_values:
+
+        # Initialize and train the Logistic Regression model
+        # max_iter is increased to 1000 to give the math engine time to solve complex penalties
+        model = LogisticRegression(solver=solver, penalty=penalty, C=C, max_iter=1000, random_state=42)
+        model.fit(X_train_scaled, y_train)
+
+        # Predict on the test set
+        y_pred = model.predict(X_test_scaled)
+
+        # Calculate evaluation metrics
+        acc = accuracy_score(y_test, y_pred)
+        prec = precision_score(y_test, y_pred, zero_division=0)
+        rec = recall_score(y_test, y_pred, zero_division=0)
+        f1 = f1_score(y_test, y_pred, zero_division=0)
+
+        # Record the results
+        results_list.append({
+            'Solver': solver,
+            'Penalty': penalty,
+            'C': C,
+            'Accuracy': round(acc, 4),
+            'Precision': round(prec, 4),
+            'Recall': round(rec, 4),
+            'F1 Score': round(f1, 4)
+        })
+
+# 6. Convert results to DataFrame
+results_df = pd.DataFrame(results_list)
+
+# 7. Sort by F1 Score (Primary metric for medical/diabetes datasets), then Accuracy
+results_df = results_df.sort_values(by=['F1 Score', 'Accuracy'], ascending=[False, False]).reset_index(drop=True)
+
+# 8. Display the FULL table (No .head() used here, so you see everything!)
+print("=== Logistic Regression Parameter Tuning Results ===")
+print(results_df.to_string())
+
+print("\nBest Model Parameters based on F1 Score:")
+print(results_df.iloc[0])
+
+```
+# check polynomial regression for different degree
 
 ```jsx
 from sklearn.preprocessing import PolynomialFeatures
